@@ -1,7 +1,7 @@
 import time
 import requests
 
-TOKEN = "ТОКЕН_СЮДА"
+TOKEN = "7736149860:AAEd9QqxIuO53k2KZEOqt2c7YIwP5PmB730"
 URL = f"https://api.telegram.org/bot{7736149860:AAEd9QqxIuO53k2KZEOqt2c7YIwP5PmB730}/"
 
 last_update_id = 0
