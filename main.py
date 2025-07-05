@@ -1,23 +1,35 @@
-import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message
-from aiogram.filters import CommandStart
+import time
+import requests
 
-TOKEN = "7736149860:AAEd9QqxIuO53k2KZEOqt2c7YIwP5PmB730"
+TOKEN = "ТОКЕН_СЮДА"
+URL = f"https://api.telegram.org/bot{7736149860:AAEd9QqxIuO53k2KZEOqt2c7YIwP5PmB730}/"
 
-bot = Bot(token=TOKEN)
-dp = Dispatcher()
+last_update_id = 0
 
-@dp.message(CommandStart())
-async def start(message: Message):
-    await message.answer("Здарова, Ржавый! Чё по тачкам ищем?")
+def get_updates():
+    global last_update_id
+    response = requests.get(URL + "getUpdates", params={"offset": last_update_id + 1})
+    return response.json()["result"]
 
-@dp.message()
-async def echo(message: Message):
-    await message.answer(f"Ты сказал: {message.text}")
+def send_message(chat_id, text):
+    requests.post(URL + "sendMessage", data={"chat_id": chat_id, "text": text})
 
-async def main():
-    await dp.start_polling(bot)
+def main():
+    global last_update_id
+    while True:
+        updates = get_updates()
+        for update in updates:
+            last_update_id = update["update_id"]
+            message = update.get("message", {})
+            chat_id = message.get("chat", {}).get("id")
+            text = message.get("text", "")
+
+            if text == "/start":
+                send_message(chat_id, "Здорова, Рыжий! Чё подбираем?")
+            else:
+                send_message(chat_id, f"Принял: {text}")
+
+        time.sleep(1)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
